@@ -2,12 +2,25 @@ import uvicorn
 from fastapi import FastAPI
 from gateapi.api.routers import order, product
 from gateapi.api.dependencies import destroy_nameko_pool, config
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 # Load routes
 app.include_router(order.router)
 app.include_router(product.router)
+
+
+# enable cors to front end
+origins = [
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+)
 
 # Setting up nameko cluster rpc client pool connections
 @app.on_event("startup")
